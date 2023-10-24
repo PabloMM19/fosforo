@@ -20,6 +20,7 @@ export class AdminUserPlistUnroutedComponent implements OnInit {
   orderDirection: string = "asc";
   oPaginatorState: PaginatorState = { first: 0, rows: 10, page: 0, pageCount: 0 };
   status: HttpErrorResponse | null = null;
+  confirmacion: boolean = false;
 
   constructor(
     private oHttpClient: HttpClient,
@@ -76,4 +77,21 @@ export class AdminUserPlistUnroutedComponent implements OnInit {
     });
   }
 
+  deleteUser(u: IUser) {
+    this.oHttpClient.delete("http://localhost:8083/user/" + u.id).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User deleted' });
+        this.getPage();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'User not deleted' });
+      }
+    });
+  }
+
+  deleteUserOrNot(u: IUser) {
+    if (confirm("Si aceptas no hay vuelta atrás, ¿seguro?")) {
+      this.deleteUser(u);
+    }
+  }
 }
